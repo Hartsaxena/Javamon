@@ -1,0 +1,14 @@
++5	Helping Hand
++4	Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Obstruct, Protect, Spiky Shield, Silk Trap
++3	Fake Out, Quick Guard, Upper Hand, Wide Guard
++2	Ally Switch, Extreme Speed, Feint, First Impression, Follow Me, Rage Powder
++1	Accelerock, Aqua Jet, Baby-Doll Eyes, Bullet Punch, Grassy Glide[a], Ice Shard, Jet Punch,
+Mach Punch, Quick Attack, Shadow Sneak, Sucker Punch, Thunderclap, Vacuum Wave, Water Shuriken
+0	All other moves
+-1	None
+-2	None
+-3	Beak Blast, Focus Punch, Shell Trap
+-4	Avalanche
+-5	Counter, Mirror Coat
+-6	Circle Throw, Dragon Tail, Roar, Whirlwind, Teleport
+-7	Trick Room
