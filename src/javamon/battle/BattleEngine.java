@@ -14,6 +14,11 @@ public class BattleEngine {
     private List<Turn> turnQueue;
     private Random random;
 
+    /**
+     * Creates a battle with two teams (max 6 each) and resets turn state.
+     * @param team1 player 1 team (copied internally)
+     * @param team2 player 2 team (copied internally)
+     */
     public BattleEngine(List<Pokemon> team1, List<Pokemon> team2) {
         if (team1 == null || team2 == null) {
             throw new IllegalArgumentException("Battle must have two teams!");
@@ -29,6 +34,11 @@ public class BattleEngine {
         this.random = new Random();
     }
 
+    /**
+     * Queues a move for the given player, coercing to Struggle if PP is empty.
+     * @param playerN 1 or 2
+     * @param moveName name of the move (or Struggle)
+     */
     public void queueTurn(int playerN, String moveName) {
         Pokemon active = getActivePokemon(playerN);
 
@@ -46,6 +56,11 @@ public class BattleEngine {
 
         queueTurn(new Turn(playerN, moveName));
     }
+    /**
+     * Queues a switch for the given player.
+     * @param playerN 1 or 2
+     * @param newPokemon index in that player's team
+     */
     public void queueTurn(int playerN, int newPokemon) {
         if (playerN != 1 && playerN != 2) {
             throw new IllegalArgumentException();
@@ -59,6 +74,9 @@ public class BattleEngine {
         queueTurn(new Turn(playerN, newPokemon));
     }
 
+    /**
+     * Adds or replaces a queued turn, enforcing one per player and validity.
+     */
     private void queueTurn(Turn turn) {
         if (turnQueue.size() >= 2) {
             throw new IllegalArgumentException("Only up to two turns can be queued per turn");
@@ -80,6 +98,9 @@ public class BattleEngine {
         turnQueue.add(turn);
     }
 
+    /**
+     * Resolves the two queued turns in order, writing battle text to output.
+     */
     public void playOutTurns(PrintStream output) {
         if (turnQueue.size() != 2) {
             throw new IllegalArgumentException("Must have two turns queued before playing out round");
@@ -102,10 +123,16 @@ public class BattleEngine {
         this.turnQueue.clear();
     }
 
+    /**
+     * @return true if either side has no usable Pokemon.
+     */
     public boolean isFinished() {
         return side1.isWiped() || side2.isWiped();
     }
 
+    /**
+     * Checks if a proposed turn is legal for the current battle state.
+     */
     public boolean isValidTurn(Turn t) {
         if (t.getType() == Turn.TurnType.Switch) {
             // Validate switch turn
@@ -163,6 +190,10 @@ public class BattleEngine {
         }
     }
 
+    /**
+     * @param playerN 1 or 2
+     * @return the active Pokemon for that side
+     */
     public Pokemon getActivePokemon(int playerN) {
         if (playerN == 1) {
             return side1.activePokemon();
@@ -173,6 +204,11 @@ public class BattleEngine {
         }
     }
 
+    /**
+     * Returns a copy of the team's current Pokemon order for a player.
+     * @param playerN 1 or 2
+     * @return list of Pokemon on that side
+     */
     public List<Pokemon> getPokemon(int playerN) {
         List<Pokemon> pokes = new ArrayList<>();
         if (playerN == 1) {
@@ -190,10 +226,16 @@ public class BattleEngine {
         return pokes;
     }
 
+    /**
+     * @return the current turn number (1-indexed).
+     */
     public int getTurnN() {
         return turnN;
     }
 
+    /**
+     * Executes a switch turn: announce, then swap active Pokemon.
+     */
     private void playSwitch(Turn t, PrintStream output) {
         int playerN = t.getPlayerN();
         Side side = (playerN == 1) ? side1 : side2;
@@ -210,6 +252,9 @@ public class BattleEngine {
         side.switchActive(newPokemonIndex);
     }
 
+    /**
+     * Orders two turns by switch priority, move priority, speed, then coin flip.
+     */
     private Turn fasterMove(Turn turn1, Turn turn2) {
 
         // Switches take priority (except for pursuit)
@@ -249,6 +294,9 @@ public class BattleEngine {
         return random.nextBoolean() ? turn1 : turn2;
     }
 
+    /**
+     * Executes a move turn: accuracy, PP, damage, and faint checks.
+     */
     private void playMove(Turn t, PrintStream output) {
         int playerN = t.getPlayerN();
         Pokemon attacker = getActivePokemon(playerN);

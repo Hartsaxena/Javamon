@@ -9,10 +9,16 @@ public final class DamagingMove extends Move {
     private final DamageType damageType;
     private final int power;
 
+    /**
+     * Creates a basic damaging move with no special effect and priority 0.
+     */
     public DamagingMove(String name, Type type, DamageType damageType, int power, int accuracy, int pp, List<DamageSourceType> attributes) {
         this(name, type, damageType, power, accuracy, pp, attributes, null, 0);
     }
 
+    /**
+     * Full constructor for a damaging move with effect and priority.
+     */
     public DamagingMove(String name, Type type, DamageType damageType, int power, int accuracy, int pp, List<DamageSourceType> attributes, MoveEffect effect, int priority) {
         super(name, type, accuracy, pp, attributes, effect, priority);
 
@@ -20,6 +26,9 @@ public final class DamagingMove extends Move {
         this.power = power;
     }
 
+    /**
+     * Calculates damage, applies it, handles effectiveness text, and fires effect.
+     */
     @Override
     public String apply(Pokemon attacker, Pokemon defender) {
         int dmg = calculateDamage(attacker, defender);
@@ -43,6 +52,9 @@ public final class DamagingMove extends Move {
         return moveOutput + effectivenessMessage + damagedOutput;
     }
 
+    /**
+     * Computes raw damage before applying faint checks.
+     */
     private int calculateDamage(Pokemon attacker, Pokemon defender) {
         // 1. Determine which stats to use based on DamageType
         int attackStat;
@@ -66,6 +78,9 @@ public final class DamagingMove extends Move {
         return (int) (baseDamage * modifiers);
     }
 
+    /**
+     * Computes STAB, type, and random modifiers.
+     */
     private double calculateModifiers(Pokemon attacker, Pokemon defender) {
         double stab = 1.0;
         if (attacker.getTypes().contains(this.getType())) {
@@ -78,10 +93,12 @@ public final class DamagingMove extends Move {
         return stab * typeEffectiveness * random;
     }
 
+    /** @return physical or special classification. */
     public DamageType getDamageType() {
         return damageType;
     }
 
+    /** @return base power of the move. */
     public int getPower() {
         return power;
     }
