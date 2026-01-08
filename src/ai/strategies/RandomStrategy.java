@@ -1,8 +1,8 @@
 package ai.strategies;
 
+import java.util.*;
 import ai.BattleContext;
 import javamon.battle.Turn;
-import java.util.*;
 
 /**
  * This strategy chooses a random move for each turn. Pokemon are never switched when not necessary.
@@ -23,6 +23,6 @@ public class RandomStrategy implements Strategy {
     public Turn decideTurn(BattleContext context) {
         List<String> validMoves = context.getValidMoves();
         String chosenMove = validMoves.get(rng.nextInt(validMoves.size()));
-        return new Turn(context.getBotPlayerNumber(), chosenMove);
+        return new Turn(context.getPlayerN(), chosenMove);
     }
 }

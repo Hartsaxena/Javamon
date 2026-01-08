@@ -21,6 +21,6 @@ public interface Strategy {
         if (validSwitches.isEmpty()) {
             throw new IllegalStateException("No valid switches available!");
         }
-        return new Turn(context.getBotPlayerNumber(), validSwitches.get(0));
+        return new Turn(context.getPlayerN(), validSwitches.get(0));
     }
 }

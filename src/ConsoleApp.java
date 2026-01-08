@@ -3,7 +3,7 @@ import java.util.*;
 import javamon.entities.*;
 import javamon.entities.moves.Move;
 import javamon.battle.*;
-import ai.BattleBot;
+import ai.*;
 import ai.strategies.*;
 
 class ConsoleApp {
@@ -11,6 +11,45 @@ class ConsoleApp {
     static boolean gameOver = false;
     static final boolean twoPlayerMode = false;
     static final BattleBot enemyAI = new BattleBot(new RandomStrategy(), 2);
+    static final PrintStream OUTPUT = System.out;
+
+    private static void outputPokemonState(Pokemon poke) {
+        OUTPUT.print(poke.getNickname());
+        Pokemon.StatusCondition status = poke.getStatusCondition();
+        if (status != Pokemon.StatusCondition.None) {
+            OUTPUT.print("{" + status + "}");
+        }
+        OUTPUT.println();
+        OUTPUT.println(healthBarString(poke));
+    }
+
+    private static void outputBattleContext(BattleContext context) {
+        OUTPUT.println("ENEMY: (" + context.getOpponentTeam().size() + " Pokemon):");
+        outputPokemonState(context.getOpponentActivePokemon());
+
+        OUTPUT.println();
+
+        OUTPUT.println("YOU: (" + context.getMyTeam().size() + " Pokemon):");
+        outputPokemonState(context.getMyActivePokemon());
+    }
+
+    private static String healthBarString(Pokemon poke) {
+        final int size = 20;
+        String output = "[";
+
+        int healthChars = poke.getCurrentHp() * 20 / poke.getEffectiveStats().get(Stat.Hp);
+        int emptyChars = size - healthChars;
+        
+        for (int i = 0; i < healthChars; i++) {
+            output += "#";
+        }
+        for (int i = 0; i < emptyChars; i++) {
+            output += "-";
+        }
+
+        output += "]";
+        return output;
+    }
 
     private static int promptMenu(List<String> options, Scanner input ,PrintStream output) {
         return promptMenu(options, input, output, "Please input your choice: ");
@@ -108,24 +147,29 @@ class ConsoleApp {
         List<Pokemon> playerTeam = new ArrayList<>(List.of(charmander, bulbasaur));
         List<Pokemon> oppTeam = new ArrayList<>(List.of(bulbasaur, charmander));
         BattleEngine battleEngine = new BattleEngine(playerTeam, oppTeam);
+        BattleContext playerContext = new BattleContext(battleEngine, 1);
 
-        PrintStream output = System.out;
         Scanner input = new Scanner(System.in);
         ByteArrayOutputStream battleBuffer = new ByteArrayOutputStream();
         PrintStream battleStream = new PrintStream(battleBuffer);
+
+        System.out.println();
 
         while (true) {
             if (battleEngine.isFinished()) {
                 break;
             }
+
+            outputBattleContext(playerContext);
+            OUTPUT.println();
             
-            promptTurns(battleEngine, input, output, 1);
+            promptTurns(battleEngine, input, OUTPUT, 1);
             if (gameOver) {
                 break;
             }
 
             if (twoPlayerMode) {
-                promptTurns(battleEngine, input, output, 2);
+                promptTurns(battleEngine, input, OUTPUT, 2);
                 if (gameOver) {
                     break;
                 }
@@ -142,11 +186,11 @@ class ConsoleApp {
                 if (line.isBlank()) {
                     continue;
                 }
-                output.print(line);
+                OUTPUT.print(line);
                 input.nextLine();
             }
 
-            System.out.print("\n\n");
+            OUTPUT.print("\n\n");
         }
         
         System.out.println("Reached end of program.");
